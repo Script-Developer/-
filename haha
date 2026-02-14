@@ -1,0 +1,137 @@
+-- Teleport Position Script (FRESH VERSION)
+-- Place this in StarterPlayer > StarterPlayerScripts (LocalScript)
+
+local Players = game:GetService("Players")
+local player = Players.LocalPlayer
+
+wait(1) -- Wait for character to load
+
+-- Create ScreenGui
+local screenGui = Instance.new("ScreenGui")
+screenGui.Name = "TeleportPositionGui"
+screenGui.ResetOnSpawn = false
+screenGui.Parent = player:WaitForChild("PlayerGui")
+
+-- Main Button
+local mainButton = Instance.new("TextButton")
+mainButton.Size = UDim2.new(0, 200, 0, 60)
+mainButton.Position = UDim2.new(0, 10, 0, 10)
+mainButton.BackgroundColor3 = Color3.fromRGB(50, 100, 200)
+mainButton.Text = "Teleport Position"
+mainButton.TextColor3 = Color3.new(1, 1, 1)
+mainButton.TextSize = 18
+mainButton.Font = Enum.Font.GothamBold
+mainButton.BorderSizePixel = 0
+mainButton.Parent = screenGui
+
+local mainCorner = Instance.new("UICorner")
+mainCorner.CornerRadius = UDim.new(0, 10)
+mainCorner.Parent = mainButton
+
+-- Menu Background Frame
+local menuBG = Instance.new("Frame")
+menuBG.Size = UDim2.new(0, 360, 0, 500)
+menuBG.Position = UDim2.new(0.5, -180, 0.5, -250)
+menuBG.BackgroundColor3 = Color3.fromRGB(25, 25, 25)
+menuBG.BorderSizePixel = 3
+menuBG.BorderColor3 = Color3.fromRGB(100, 150, 255)
+menuBG.Visible = false
+menuBG.Parent = screenGui
+
+local bgCorner = Instance.new("UICorner")
+bgCorner.CornerRadius = UDim.new(0, 12)
+bgCorner.Parent = menuBG
+
+-- Title Bar
+local titleBar = Instance.new("Frame")
+titleBar.Size = UDim2.new(1, 0, 0, 50)
+titleBar.BackgroundColor3 = Color3.fromRGB(50, 100, 200)
+titleBar.BorderSizePixel = 0
+titleBar.Parent = menuBG
+
+local titleCorner = Instance.new("UICorner")
+titleCorner.CornerRadius = UDim.new(0, 12)
+titleCorner.Parent = titleBar
+
+local titleLabel = Instance.new("TextLabel")
+titleLabel.Size = UDim2.new(1, -50, 1, 0)
+titleLabel.BackgroundTransparency = 1
+titleLabel.Text = "Choose Location"
+titleLabel.TextColor3 = Color3.new(1, 1, 1)
+titleLabel.TextSize = 20
+titleLabel.Font = Enum.Font.GothamBold
+titleLabel.Parent = titleBar
+
+-- Close X Button
+local closeBtn = Instance.new("TextButton")
+closeBtn.Size = UDim2.new(0, 40, 0, 40)
+closeBtn.Position = UDim2.new(1, -45, 0, 5)
+closeBtn.BackgroundColor3 = Color3.fromRGB(200, 50, 50)
+closeBtn.Text = "✕"
+closeBtn.TextColor3 = Color3.new(1, 1, 1)
+closeBtn.TextSize = 24
+closeBtn.Font = Enum.Font.GothamBold
+closeBtn.BorderSizePixel = 0
+closeBtn.Parent = titleBar
+
+local closeCorner = Instance.new("UICorner")
+closeCorner.CornerRadius = UDim.new(0, 8)
+closeCorner.Parent = closeBtn
+
+-- Scrolling Frame for Locations
+local scrollFrame = Instance.new("ScrollingFrame")
+scrollFrame.Size = UDim2.new(1, -10, 1, -60)
+scrollFrame.Position = UDim2.new(0, 5, 0, 55)
+scrollFrame.BackgroundColor3 = Color3.fromRGB(35, 35, 35)
+scrollFrame.BorderSizePixel = 0
+scrollFrame.ScrollBarThickness = 15
+scrollFrame.ScrollBarImageColor3 = Color3.fromRGB(100, 150, 255)
+scrollFrame.CanvasSize = UDim2.new(0, 0, 0, 570) -- Big enough for 9 buttons
+scrollFrame.Parent = menuBG
+
+-- Location Data (9 locations with Spawn first)
+local locations = {
+	{name = "Spawn", color = Color3.fromRGB(80, 200, 80), coords = Vector3.new(0, 5, 0)},
+	{name = "Divine", color = Color3.fromRGB(150, 150, 150), coords = Vector3.new(5.0, 3.0, -3330.0)}
+}
+
+-- Create Location Buttons
+for index, location in ipairs(locations) do
+	local button = Instance.new("TextButton")
+	button.Size = UDim2.new(1, -20, 0, 55)
+	button.Position = UDim2.new(0, 10, 0, (index - 1) * 60 + 5)
+	button.BackgroundColor3 = location.color
+	button.Text = location.name
+	button.TextColor3 = Color3.new(1, 1, 1)
+	button.TextSize = 20
+	button.Font = Enum.Font.GothamBold
+	button.BorderSizePixel = 0
+	button.Parent = scrollFrame
+	
+	local btnCorner = Instance.new("UICorner")
+	btnCorner.CornerRadius = UDim.new(0, 10)
+	btnCorner.Parent = button
+	
+	-- Teleport Function
+	button.MouseButton1Click:Connect(function()
+		local character = player.Character
+		if character and character:FindFirstChild("HumanoidRootPart") then
+			character.HumanoidRootPart.CFrame = CFrame.new(location.coords)
+			menuBG.Visible = false
+			print("Teleported to: " .. location.name)
+		end
+	end)
+end
+
+-- Main Button Click - Toggle Menu
+mainButton.MouseButton1Click:Connect(function()
+	menuBG.Visible = not menuBG.Visible
+end)
+
+-- Close Button Click
+closeBtn.MouseButton1Click:Connect(function()
+	menuBG.Visible = false
+end)
+
+print("✅ Teleport Position System Loaded!")
+print("📍 9 Locations Available (Spawn is #1)")
